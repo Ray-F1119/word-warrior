@@ -15,6 +15,13 @@ const AntiCheat = {
         this.cooldownEndTime = 0;
     },
 
+    /** Call at the start of each new question to reset the per-question clock */
+    resetQuestionTimer() {
+        this.lastAnswerTime = Date.now();
+        this.fastAnswerStreak = 0;
+    },
+
+
     /**
      * Check if an answer attempt is valid
      * @returns {{ valid: boolean, reason?: string, cooldownMs?: number }}

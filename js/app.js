@@ -98,12 +98,19 @@ function loadGame() {
     const data = Storage.load();
     if (data) {
         Object.assign(gameState.player, data.player || {});
-        Object.assign(gameState.inventory, data.inventory || {});
+        // Validate inventory arrays — corrupt save must not crash the shop
+        if (data.inventory) {
+            gameState.inventory.weapons = Array.isArray(data.inventory.weapons)
+                ? data.inventory.weapons : ['basic_pistol'];
+            gameState.inventory.skins = Array.isArray(data.inventory.skins)
+                ? data.inventory.skins : ['default'];
+        }
         Object.assign(gameState.mastery, data.mastery || {});
         Object.assign(gameState.settings, data.settings || {});
         Object.assign(gameState.stats, data.stats || {});
     }
 }
+
 
 // ==================== UI UPDATES ====================
 function updateMenuUI() {

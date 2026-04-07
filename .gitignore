@@ -4,3 +4,4 @@ node_modules/
 codex-review/
 pipeline_definition.yaml
 replit_prompt.md
+.vercel

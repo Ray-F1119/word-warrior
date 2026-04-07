@@ -107,7 +107,10 @@ const GameEngine = {
 
     /** Generate and display next question */
     _nextQuestion() {
+        // Reset per-question anticheat clock (fixes cross-question timer mismatch)
+        AntiCheat.resetQuestionTimer();
         const q = QuizSystem.generateQuestion();
+
         if (!q) return;
 
         const charEl = document.getElementById('question-char');
@@ -384,6 +387,8 @@ const GameEngine = {
 
     /** End the round */
     endRound(reason) {
+        // Idempotency guard — prevent double-trigger from timeout+death race
+        if (!gameState.round.active) return;
         gameState.round.active = false;
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
@@ -446,6 +451,7 @@ const GameEngine = {
         setText('result-time', `${min}:${sec.toString().padStart(2, '0')}`);
 
         setText('reward-base', `+${rewards.base}`);
+        setText('reward-enemy', `+${rewards.enemy}`);
         setText('reward-combo', `+${rewards.combo}`);
         setText('reward-accuracy', `+${rewards.accuracy}`);
         setText('reward-total', `+${rewards.total} 💰`);

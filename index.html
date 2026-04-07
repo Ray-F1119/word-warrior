@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -7,11 +8,14 @@
     <meta name="description" content="一款伪装成射击游戏的识字学习游戏，专为7-8岁小学生设计">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/game.css">
 </head>
+
 <body>
     <!-- ==================== MENU SCREEN ==================== -->
     <div id="screen-menu" class="screen active">
@@ -176,9 +180,11 @@
             <div class="results-rewards">
                 <h3>— 战利品 —</h3>
                 <div class="reward-row"><span>基础金币</span><span id="reward-base">+0</span></div>
+                <div class="reward-row"><span>击杀奖励</span><span id="reward-enemy">+0</span></div>
                 <div class="reward-row"><span>连杀奖励</span><span id="reward-combo">+0</span></div>
                 <div class="reward-row"><span>命中奖励</span><span id="reward-accuracy">+0</span></div>
                 <div class="reward-row total"><span>总计</span><span id="reward-total">+0 💰</span></div>
+
             </div>
             <div class="results-buttons">
                 <button class="btn btn-primary" id="btn-play-again">🔄 再来一局</button>
@@ -247,4 +253,5 @@
     <script src="js/meta/ShopSystem.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

@@ -1,0 +1,38 @@
+﻿You are a senior game designer and educational technology expert. Review the following two files as a pair:
+
+1. replit_prompt.md - A complete prompt for Replit Agent to build a Chinese literacy battle royale web game for 7-8 year old children
+2. game_design_doc.md - The corresponding Game Design Document (GDD)
+
+Context: This is a lightweight web-based game (HTML+CSS+JS, no backend) that disguises Chinese character learning as a shooter game. The child answers character questions to fire weapons, with combo systems, loot boxes, equipment economy, and anti-guessing mechanics.
+
+Review Dimensions (output structured report):
+
+1. GAME DESIGN COHERENCE
+   - Does the core loop make sense? Any broken feedback loops?
+   - Is the reward/punishment balance appropriate for 7-8 year olds?
+   - Any missing systems that would cause the game to feel incomplete?
+   - Is the economy balanced (gold income vs spending sinks)?
+
+2. EDUCATIONAL EFFECTIVENESS
+   - Will the anti-guessing system actually work?
+   - Is spaced repetition properly integrated?
+   - Are the 4 question types sufficient for literacy learning?
+   - Any risk the game becomes pure entertainment with no learning?
+
+3. TECHNICAL FEASIBILITY (for Replit Agent)
+   - Is the project structure clear enough for AI code generation?
+   - Any features too complex for vanilla HTML/CSS/JS?
+   - Will localStorage be sufficient for save data?
+   - Any performance concerns (animations, audio)?
+
+4. MISSING OR WEAK AREAS
+   - What critical features are missing?
+   - What would make this game significantly better?
+   - Any UX issues for a 7-8 year old user?
+
+5. PROMPT QUALITY (for Replit Agent)
+   - Is the prompt detailed enough for Replit Agent to generate working code?
+   - Any ambiguous instructions that could lead to wrong implementation?
+   - Suggested improvements to the prompt structure
+
+Output format: For each dimension, use Critical / Warning / Suggestion severity levels. Be specific and actionable.

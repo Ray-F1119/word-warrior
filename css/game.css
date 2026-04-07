@@ -1,0 +1,389 @@
+/* ==================== GAME SCREEN STYLES ==================== */
+
+.game-hud {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ---- Top HUD Bar ---- */
+.hud-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 10;
+}
+
+.hud-hp {
+    display: flex;
+    gap: 2px;
+    font-size: 1.4rem;
+}
+
+.hud-hp .heart {
+    transition: all 0.3s;
+}
+
+.hud-hp .heart.lost {
+    filter: grayscale(1);
+    opacity: 0.3;
+}
+
+.hud-timer {
+    font-family: var(--font-game);
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    padding: var(--space-xs) var(--space-md);
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: var(--radius-full);
+}
+
+.hud-timer.warning {
+    color: var(--danger);
+    border-color: rgba(255, 68, 68, 0.4);
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.hud-score {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent-gold);
+}
+
+/* ---- Enemy Area ---- */
+.enemy-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    position: relative;
+    min-height: 180px;
+}
+
+.enemy-sprite {
+    font-size: 5rem;
+    transition: all 0.3s;
+    filter: drop-shadow(0 0 20px rgba(233, 69, 96, 0.3));
+}
+
+.enemy-info {
+    margin-top: var(--space-md);
+    text-align: center;
+    width: 60%;
+    max-width: 250px;
+}
+
+.enemy-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-red);
+    margin-bottom: var(--space-xs);
+}
+
+.enemy-hp-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.enemy-hp-fill {
+    height: 100%;
+    width: 100%;
+    background: var(--gradient-fire);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+}
+
+/* ---- Effects Layer ---- */
+.effects-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.effect-text {
+    position: absolute;
+    font-family: var(--font-game);
+    font-weight: 700;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.effect-combo {
+    font-size: 1.2rem;
+    color: var(--accent-gold);
+    text-shadow: 0 0 10px rgba(245, 197, 24, 0.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.effect-headshot {
+    font-size: 0.9rem;
+    color: var(--accent-cyan);
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.effect-score {
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+}
+
+.effect-bullet {
+    width: 6px;
+    height: 12px;
+    background: var(--accent-gold);
+    border-radius: 3px;
+    position: absolute;
+    box-shadow: 0 0 8px rgba(245, 197, 24, 0.6);
+}
+
+.effect-particle {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    position: absolute;
+}
+
+/* ---- Question Area ---- */
+.question-area {
+    text-align: center;
+    padding: var(--space-md) var(--space-lg);
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.question-type {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.question-char {
+    font-family: var(--font-cn);
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    line-height: 1.2;
+}
+
+/* ---- Answer Grid ---- */
+.answer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.answer-btn {
+    font-family: var(--font-cn);
+    font-size: 1.5rem;
+    font-weight: 700;
+    min-height: 64px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.answer-btn:active {
+    transform: scale(0.95);
+}
+
+.answer-btn.correct {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: var(--accent-green);
+    box-shadow: var(--shadow-glow-green);
+    color: var(--accent-green);
+}
+
+.answer-btn.wrong {
+    background: rgba(255, 68, 68, 0.2);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.answer-btn.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* ---- Bottom Bar ---- */
+.hud-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    background: rgba(0, 0, 0, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.combo-display,
+.accuracy-display {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.combo-label,
+.accuracy-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.combo-value {
+    font-family: var(--font-game);
+    font-size: 0.9rem;
+    color: var(--accent-gold);
+    min-width: 40px;
+}
+
+.combo-value.hot {
+    color: var(--accent-red);
+    text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+}
+
+.combo-value.fire {
+    color: var(--accent-gold);
+    text-shadow: 0 0 15px rgba(245, 197, 24, 0.6);
+}
+
+.accuracy-value {
+    font-family: var(--font-game);
+    font-size: 0.9rem;
+    color: var(--accent-cyan);
+}
+
+/* ---- Anti-Cheat Overlay ---- */
+.anticheat-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid var(--warning);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    text-align: center;
+    z-index: 30;
+    max-width: 300px;
+}
+
+.anticheat-overlay .anticheat-text {
+    font-size: 1.1rem;
+    color: var(--warning);
+    font-weight: 700;
+}
+
+.anticheat-overlay .anticheat-timer {
+    font-family: var(--font-game);
+    font-size: 2rem;
+    color: var(--accent-red);
+    margin-top: var(--space-md);
+}
+
+/* ---- Mercy / Tutorial Popup ---- */
+.mercy-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-card);
+    border: 2px solid var(--accent-cyan);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    text-align: center;
+    z-index: 30;
+    max-width: 320px;
+    box-shadow: var(--shadow-glow-cyan);
+}
+
+.mercy-char {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: var(--space-md);
+}
+
+.mercy-pinyin {
+    font-size: 1.3rem;
+    color: var(--accent-cyan);
+    margin-bottom: var(--space-sm);
+}
+
+.mercy-meaning {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* ---- Game Over Overlay ---- */
+.gameover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 40;
+}
+
+.gameover-text {
+    font-family: var(--font-game);
+    font-size: 1.5rem;
+    color: var(--danger);
+    text-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 400px) {
+    .enemy-sprite {
+        font-size: 4rem;
+    }
+
+    .question-char {
+        font-size: 3rem;
+    }
+
+    .answer-btn {
+        font-size: 1.3rem;
+        min-height: 56px;
+    }
+
+    .hud-hp {
+        font-size: 1.2rem;
+    }
+}
+
+@media (min-height: 800px) {
+    .enemy-area {
+        min-height: 250px;
+    }
+
+    .answer-btn {
+        min-height: 72px;
+    }
+}

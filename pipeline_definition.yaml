@@ -1,0 +1,93 @@
+meta:
+  name: "word_warrior_mvp"
+  project_dir: "d:/Data/Replit/word-warrior"
+  description: "Build 识字大作战 (Word Warrior) MVP web game"
+
+roles:
+  executor: AG
+  reviewer: Codex
+
+steps:
+  - id: foundation
+    name: "Foundation — Design System + State + Routing"
+    inputs: []
+    outputs:
+      - index.html
+      - css/main.css
+      - css/animations.css
+      - js/app.js
+    gates:
+      - type: code
+        name: file_exists
+        params:
+          files: ["index.html", "css/main.css", "js/app.js"]
+    review: false
+
+  - id: char_db
+    name: "Character Database — 一年级上册"
+    inputs:
+      - js/app.js
+    outputs:
+      - js/data/characters.js
+    gates:
+      - type: code
+        name: file_exists
+        params:
+          files: ["js/data/characters.js"]
+    review: false
+
+  - id: game_engine
+    name: "Core Game Engine — Quiz + Combo + HP"
+    briefing: "This is the most critical step. The game must be playable end-to-end after this step."
+    inputs:
+      - js/app.js
+      - js/data/characters.js
+    outputs:
+      - css/game.css
+      - js/game/GameEngine.js
+      - js/game/QuizSystem.js
+      - js/game/ComboSystem.js
+      - js/game/HealthSystem.js
+    gates:
+      - type: code
+        name: file_exists
+        params:
+          files: ["js/game/GameEngine.js", "js/game/QuizSystem.js", "js/game/ComboSystem.js", "js/game/HealthSystem.js"]
+    review:
+      reviewer: Codex
+      role: "Senior Game Developer"
+      focus: "game loop correctness, quiz anti-cheat logic, spaced repetition, combo system edge cases, mobile touch targets"
+
+  - id: economy
+    name: "Results Screen + Economy + Shop"
+    inputs:
+      - js/app.js
+      - js/game/GameEngine.js
+    outputs:
+      - js/meta/Economy.js
+      - js/meta/ShopSystem.js
+      - js/meta/Inventory.js
+    gates:
+      - type: code
+        name: file_exists
+        params:
+          files: ["js/meta/Economy.js", "js/meta/ShopSystem.js", "js/meta/Inventory.js"]
+    review: false
+
+  - id: polish
+    name: "Tutorial + Sound + Polish"
+    briefing: "Add tutorial for first-time players, sound effects, visual polish, and mobile responsiveness."
+    inputs:
+      - index.html
+      - js/app.js
+    outputs:
+      - _verification/final_check.md
+    gates:
+      - type: code
+        name: file_exists
+        params:
+          files: ["index.html", "js/app.js"]
+    review:
+      reviewer: Codex
+      role: "QA Engineer + UX Designer"
+      focus: "full user flow, mobile responsiveness, accessibility for 7-8 year olds, localStorage persistence, edge cases"

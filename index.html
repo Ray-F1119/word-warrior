@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>识字大作战 | Word Warrior</title>
+    <meta name="description" content="一款伪装成射击游戏的识字学习游戏，专为7-8岁小学生设计">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <!-- ==================== MENU SCREEN ==================== -->
+    <div id="screen-menu" class="screen active">
+        <div class="menu-container">
+            <div class="menu-logo">
+                <h1 class="logo-title">识字大作战</h1>
+                <p class="logo-subtitle">WORD WARRIOR</p>
+                <div class="logo-decoration"></div>
+            </div>
+            <div class="menu-player-info">
+                <div class="player-rank" id="menu-rank">🥉 青铜</div>
+                <div class="player-gold">💰 <span id="menu-gold">0</span></div>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn btn-primary btn-lg" id="btn-start-game">
+                    <span class="btn-icon">⚔️</span> 开始战斗
+                </button>
+                <button class="btn btn-secondary" id="btn-shop">
+                    <span class="btn-icon">🏪</span> 武器商店
+                </button>
+                <button class="btn btn-secondary" id="btn-inventory">
+                    <span class="btn-icon">🎒</span> 我的装备
+                </button>
+                <button class="btn btn-ghost" id="btn-settings">
+                    <span class="btn-icon">⚙️</span> 设置
+                </button>
+            </div>
+            <div class="menu-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="menu-total-rounds">0</span>
+                    <span class="stat-label">总场次</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="menu-best-combo">0</span>
+                    <span class="stat-label">最佳连杀</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="menu-accuracy">0%</span>
+                    <span class="stat-label">命中率</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DIFFICULTY SELECT ==================== -->
+    <div id="screen-difficulty" class="screen">
+        <div class="difficulty-container">
+            <h2 class="section-title">选择难度</h2>
+            <p class="section-desc">选择学期来决定识字难度</p>
+            <div class="difficulty-grid">
+                <button class="difficulty-card" data-semester="1_up">
+                    <div class="diff-icon">⭐</div>
+                    <div class="diff-name">一年级上</div>
+                    <div class="diff-desc">基础汉字</div>
+                </button>
+                <button class="difficulty-card locked" data-semester="1_down">
+                    <div class="diff-icon">🔒</div>
+                    <div class="diff-name">一年级下</div>
+                    <div class="diff-desc">即将开放</div>
+                </button>
+                <button class="difficulty-card locked" data-semester="2_up">
+                    <div class="diff-icon">🔒</div>
+                    <div class="diff-name">二年级上</div>
+                    <div class="diff-desc">即将开放</div>
+                </button>
+            </div>
+            <div class="round-settings">
+                <h3>对局时长</h3>
+                <div class="time-options">
+                    <button class="time-btn" data-time="300">5分钟</button>
+                    <button class="time-btn active" data-time="480">8分钟</button>
+                    <button class="time-btn" data-time="600">10分钟</button>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-lg" id="btn-confirm-start">
+                <span class="btn-icon">🚀</span> 出发！
+            </button>
+            <button class="btn btn-ghost" id="btn-back-menu">← 返回</button>
+        </div>
+    </div>
+
+    <!-- ==================== GAME SCREEN ==================== -->
+    <div id="screen-game" class="screen">
+        <div class="game-hud">
+            <!-- Top Bar -->
+            <div class="hud-top">
+                <div class="hud-hp" id="hud-hp">
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                </div>
+                <div class="hud-timer" id="hud-timer">⏱️ 8:00</div>
+                <div class="hud-score" id="hud-score">💰 0</div>
+            </div>
+
+            <!-- Enemy Area -->
+            <div class="enemy-area">
+                <div class="enemy-sprite" id="enemy-sprite">👾</div>
+                <div class="enemy-info">
+                    <div class="enemy-name" id="enemy-name">入侵者 Lv.1</div>
+                    <div class="enemy-hp-bar">
+                        <div class="enemy-hp-fill" id="enemy-hp-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Effects Layer -->
+            <div class="effects-layer" id="effects-layer"></div>
+
+            <!-- Question Area -->
+            <div class="question-area">
+                <div class="question-type" id="question-type">选择正确的读音</div>
+                <div class="question-char" id="question-char">大</div>
+            </div>
+
+            <!-- Answer Buttons -->
+            <div class="answer-grid" id="answer-grid">
+                <button class="answer-btn" data-index="0">dà</button>
+                <button class="answer-btn" data-index="1">tài</button>
+                <button class="answer-btn" data-index="2">quǎn</button>
+                <button class="answer-btn" data-index="3">tiān</button>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="hud-bottom">
+                <div class="combo-display">
+                    <span class="combo-label">🔥 连杀</span>
+                    <span class="combo-value" id="combo-value">x0</span>
+                </div>
+                <div class="accuracy-display">
+                    <span class="accuracy-label">🎯</span>
+                    <span class="accuracy-value" id="accuracy-value">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== RESULTS SCREEN ==================== -->
+    <div id="screen-results" class="screen">
+        <div class="results-container">
+            <h2 class="results-title" id="results-title">🏆 战斗结束！</h2>
+            <div class="results-stats">
+                <div class="result-row">
+                    <span>消灭敌人</span>
+                    <span id="result-enemies">0</span>
+                </div>
+                <div class="result-row">
+                    <span>最高连杀</span>
+                    <span id="result-combo">x0</span>
+                </div>
+                <div class="result-row">
+                    <span>命中率</span>
+                    <span id="result-accuracy">0%</span>
+                </div>
+                <div class="result-row">
+                    <span>存活时间</span>
+                    <span id="result-time">0:00</span>
+                </div>
+            </div>
+            <div class="results-rewards">
+                <h3>— 战利品 —</h3>
+                <div class="reward-row"><span>基础金币</span><span id="reward-base">+0</span></div>
+                <div class="reward-row"><span>连杀奖励</span><span id="reward-combo">+0</span></div>
+                <div class="reward-row"><span>命中奖励</span><span id="reward-accuracy">+0</span></div>
+                <div class="reward-row total"><span>总计</span><span id="reward-total">+0 💰</span></div>
+            </div>
+            <div class="results-buttons">
+                <button class="btn btn-primary" id="btn-play-again">🔄 再来一局</button>
+                <button class="btn btn-secondary" id="btn-to-shop">🏪 去商店</button>
+                <button class="btn btn-ghost" id="btn-to-menu">🏠 回大厅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SHOP SCREEN ==================== -->
+    <div id="screen-shop" class="screen">
+        <div class="shop-container">
+            <div class="shop-header">
+                <h2 class="section-title">🏪 武器商店</h2>
+                <div class="shop-gold">💰 <span id="shop-gold">0</span></div>
+            </div>
+            <div class="shop-tabs">
+                <button class="tab-btn active" data-tab="weapons">🔫 武器</button>
+                <button class="tab-btn" data-tab="skins">👕 皮肤</button>
+            </div>
+            <div class="shop-grid" id="shop-grid">
+                <!-- Populated by JS -->
+            </div>
+            <button class="btn btn-ghost" id="btn-shop-back">← 返回大厅</button>
+        </div>
+    </div>
+
+    <!-- ==================== TUTORIAL SCREEN ==================== -->
+    <div id="screen-tutorial" class="screen">
+        <div class="tutorial-container">
+            <div class="tutorial-step" id="tutorial-content">
+                <!-- Populated by JS -->
+            </div>
+            <div class="tutorial-progress" id="tutorial-progress"></div>
+            <button class="btn btn-primary" id="btn-tutorial-next">下一步 →</button>
+            <button class="btn btn-ghost" id="btn-tutorial-skip">跳过教程</button>
+        </div>
+    </div>
+
+    <!-- ==================== SETTINGS OVERLAY ==================== -->
+    <div id="overlay-settings" class="overlay">
+        <div class="overlay-content">
+            <h2>⚙️ 设置</h2>
+            <div class="setting-row">
+                <span>音效</span>
+                <button class="toggle-btn" id="toggle-sound">开</button>
+            </div>
+            <div class="setting-row">
+                <span>重置存档</span>
+                <button class="btn btn-danger btn-sm" id="btn-reset-save">清除数据</button>
+            </div>
+            <button class="btn btn-ghost" id="btn-close-settings">关闭</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data/characters.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/antiCheat.js"></script>
+    <script src="js/game/HealthSystem.js"></script>
+    <script src="js/game/ComboSystem.js"></script>
+    <script src="js/game/QuizSystem.js"></script>
+    <script src="js/game/GameEngine.js"></script>
+    <script src="js/meta/Economy.js"></script>
+    <script src="js/meta/Inventory.js"></script>
+    <script src="js/meta/ShopSystem.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

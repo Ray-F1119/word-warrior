@@ -5,15 +5,19 @@ const QuizSystem = {
     currentQuestion: null,
     questionStartTime: 0,
     questionCount: 0,
-    recentChars: [],          // ring buffer — last 5 chars asked
-    RECENT_WINDOW: 5,         // how many to exclude
+    lastChar: null,           // hard anti-repeat: always block last char
+    recentChars: [],          // ring buffer — last N chars asked
+    RECENT_WINDOW: 8,         // how many to exclude (increased from 5)
+    lastType: null,           // track last question type to avoid patterns
 
     /** Reset for new round */
     reset() {
         this.currentQuestion = null;
         this.questionStartTime = 0;
         this.questionCount = 0;
+        this.lastChar = null;
         this.recentChars = [];
+        this.lastType = null;
     },
 
     /**
@@ -25,12 +29,24 @@ const QuizSystem = {
         const chars = getCharacters(semester);
         if (chars.length === 0) return null;
 
-        // Select character based on spaced repetition
+        // Select character based on spaced repetition (with anti-repeat)
         const selected = this._selectCharacter(chars);
         if (!selected) return null;
 
-        // Alternate question types
-        const type = this.questionCount % 2 === 0 ? 'char_to_pinyin' : 'pinyin_to_char';
+        // Weighted random question type (70/30 bias away from last type)
+        let type;
+        if (!this.lastType) {
+            type = Math.random() < 0.5 ? 'char_to_pinyin' : 'pinyin_to_char';
+        } else {
+            // 70% chance of switching type, 30% same type
+            const switchType = Math.random() < 0.7;
+            if (switchType) {
+                type = this.lastType === 'char_to_pinyin' ? 'pinyin_to_char' : 'char_to_pinyin';
+            } else {
+                type = this.lastType;
+            }
+        }
+        this.lastType = type;
         this.questionCount++;
 
         let question;
@@ -39,6 +55,9 @@ const QuizSystem = {
         } else {
             question = this._makePinyinToChar(selected, semester);
         }
+
+        // Track last char for hard anti-repeat
+        this.lastChar = selected.char;
 
         this.currentQuestion = question;
         this.questionStartTime = Date.now();
@@ -128,8 +147,9 @@ const QuizSystem = {
     },
 
     /**
-     * Select character based on spaced repetition
-     * Priority: learning (60%) > review (25%) > new (10%) > mastered (5%)
+     * Select character based on spaced repetition + anti-repeat
+     * Priority: learning (50%) > new (20%) > review (20%) > mastered (10%)
+     * Hard rule: NEVER pick the same char as lastChar
      */
     _selectCharacter(allChars) {
         const mastery = gameState.mastery;
@@ -140,48 +160,63 @@ const QuizSystem = {
             buckets[state].push(c);
         }
 
-        // Weighted random bucket selection
+        // Build a priority-ordered list of buckets to try
         const roll = Math.random();
-        let bucket;
-        if (roll < 0.60 && buckets.learning.length > 0) {
-            bucket = buckets.learning;
-        } else if (roll < 0.85 && buckets.review.length > 0) {
-            bucket = buckets.review;
-        } else if (roll < 0.95 && buckets.new.length > 0) {
-            bucket = buckets.new;
-        } else if (buckets.mastered.length > 0) {
-            bucket = buckets.mastered;
+        let bucketOrder;
+        if (roll < 0.50) {
+            bucketOrder = ['learning', 'new', 'review', 'mastered'];
+        } else if (roll < 0.70) {
+            bucketOrder = ['new', 'learning', 'review', 'mastered'];
+        } else if (roll < 0.90) {
+            bucketOrder = ['review', 'learning', 'new', 'mastered'];
         } else {
-            // Fallback: pick from any available bucket
-            bucket = buckets.learning.length > 0 ? buckets.learning :
-                buckets.new.length > 0 ? buckets.new :
-                    buckets.review.length > 0 ? buckets.review :
-                        allChars;
+            bucketOrder = ['mastered', 'review', 'learning', 'new'];
         }
 
-        // Introduce max 5 new chars per round
-        if (bucket === buckets.new) {
-            const newIntroduced = gameState.round.answeredChars.filter(c =>
-                mastery[c]?.state === 'learning' && (mastery[c]?.correct || 0) <= 1
-            ).length;
-            if (newIntroduced >= 5 && buckets.learning.length > 0) {
-                bucket = buckets.learning;
+        // Introduce max 8 new chars per round
+        const newIntroduced = gameState.round.answeredChars.filter(c =>
+            mastery[c]?.state === 'learning' && (mastery[c]?.correct || 0) <= 1
+        ).length;
+        const newCapped = newIntroduced >= 8;
+
+        // Build exclusion set: lastChar (hard block) + recentChars (soft)
+        const hardBlock = this.lastChar;
+        const recent = new Set(this.recentChars);
+
+        // Try each bucket in priority order, looking for fresh candidates
+        for (const bucketName of bucketOrder) {
+            if (newCapped && bucketName === 'new') continue;
+            const bucket = buckets[bucketName];
+            if (bucket.length === 0) continue;
+
+            // Filter: exclude hard-blocked last char AND recent window
+            const fresh = bucket.filter(c => c.char !== hardBlock && !recent.has(c.char));
+            if (fresh.length > 0) {
+                return this._pickAndTrack(fresh);
+            }
+
+            // Softer: exclude only hard-blocked last char
+            const nonRepeat = bucket.filter(c => c.char !== hardBlock);
+            if (nonRepeat.length > 0) {
+                return this._pickAndTrack(nonRepeat);
             }
         }
 
-        // Recent-window exclusion: prefer chars NOT seen in the last RECENT_WINDOW questions
-        const recent = new Set(this.recentChars);
-        const freshCandidates = bucket.filter(c => !recent.has(c.char));
-        const candidates = freshCandidates.length > 0 ? freshCandidates : bucket;
+        // Ultimate fallback: pick any char that isn't the last one
+        const any = allChars.filter(c => c.char !== hardBlock);
+        if (any.length > 0) return this._pickAndTrack(any);
 
+        // Only 1 char in the entire DB — no choice
+        return this._pickAndTrack(allChars);
+    },
+
+    /** Pick random from candidates and update ring buffer */
+    _pickAndTrack(candidates) {
         const chosen = candidates[Math.floor(Math.random() * candidates.length)];
-
-        // Push into ring buffer
         this.recentChars.push(chosen.char);
         if (this.recentChars.length > this.RECENT_WINDOW) {
             this.recentChars.shift();
         }
-
         return chosen;
     },
 

@@ -337,6 +337,43 @@ function bindEvents() {
             location.reload();
         }
     });
+
+    // Save code export/import
+    document.getElementById('btn-export-save')?.addEventListener('click', () => {
+        saveGame(); // ensure latest state
+        const code = Storage.exportCode();
+        if (!code) {
+            alert('没有存档可导出！');
+            return;
+        }
+        const display = document.getElementById('save-code-display');
+        if (display) {
+            display.style.display = 'block';
+            display.textContent = code;
+        }
+        // Copy to clipboard
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('btn-export-save');
+                if (btn) {
+                    btn.textContent = '✅ 已复制！';
+                    setTimeout(() => btn.textContent = '📤 导出存档码', 2000);
+                }
+            });
+        }
+    });
+
+    document.getElementById('btn-import-save')?.addEventListener('click', () => {
+        const code = prompt('粘贴你的存档码：');
+        if (!code) return;
+        const ok = Storage.importCode(code);
+        if (ok) {
+            alert('✅ 导入成功！游戏将重新加载');
+            location.reload();
+        } else {
+            alert('❌ 存档码无效，请检查后重试');
+        }
+    });
 }
 
 // ==================== INITIALIZATION ====================

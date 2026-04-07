@@ -232,6 +232,16 @@
                 <span>音效</span>
                 <button class="toggle-btn" id="toggle-sound">开</button>
             </div>
+            <div class="setting-row" style="flex-direction:column;align-items:stretch;gap:8px">
+                <span style="font-weight:700">💾 存档管理</span>
+                <div style="display:flex;gap:8px">
+                    <button class="btn btn-secondary btn-sm" id="btn-export-save" style="flex:1">📤 导出存档码</button>
+                    <button class="btn btn-secondary btn-sm" id="btn-import-save" style="flex:1">📥 导入存档码</button>
+                </div>
+                <div id="save-code-display"
+                    style="display:none;word-break:break-all;font-size:0.75rem;background:var(--bg-dark);padding:8px;border-radius:8px;color:var(--accent-gold);max-height:80px;overflow-y:auto">
+                </div>
+            </div>
             <div class="setting-row">
                 <span>重置存档</span>
                 <button class="btn btn-danger btn-sm" id="btn-reset-save">清除数据</button>
@@ -239,6 +249,7 @@
             <button class="btn btn-ghost" id="btn-close-settings">关闭</button>
         </div>
     </div>
+
 
     <!-- Scripts -->
     <script src="js/data/characters.js"></script>

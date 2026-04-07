@@ -48,5 +48,43 @@ const Storage = {
     /** Check if a save exists */
     hasSave() {
         return !!localStorage.getItem(this.SAVE_KEY);
+    },
+
+    /**
+     * Export save data as a compact Base64 code
+     * @returns {string} save code
+     */
+    exportCode() {
+        try {
+            const raw = localStorage.getItem(this.SAVE_KEY);
+            if (!raw) return '';
+            // Compress: btoa of JSON string
+            return btoa(unescape(encodeURIComponent(raw)));
+        } catch (e) {
+            console.warn('Export failed:', e);
+            return '';
+        }
+    },
+
+    /**
+     * Import save data from a Base64 save code
+     * @param {string} code
+     * @returns {boolean} success
+     */
+    importCode(code) {
+        try {
+            const json = decodeURIComponent(escape(atob(code.trim())));
+            const data = JSON.parse(json);
+            if (data.version !== this.VERSION) {
+                console.warn('Import version mismatch');
+                return false;
+            }
+            localStorage.setItem(this.SAVE_KEY, json);
+            return true;
+        } catch (e) {
+            console.warn('Import failed:', e);
+            return false;
+        }
     }
 };
+

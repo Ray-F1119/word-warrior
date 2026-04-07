@@ -183,19 +183,32 @@ const QuizSystem = {
         const hardBlock = this.lastChar;
         const recent = new Set(this.recentChars);
 
-        // Try each bucket in priority order, looking for fresh candidates
+        // Dynamic recent window: cap to avoid exhausting small pools
+        const totalAvailable = bucketOrder.reduce((sum, name) => {
+            if (newCapped && name === 'new') return sum;
+            return sum + buckets[name].length;
+        }, 0);
+        const effectiveWindow = Math.min(this.RECENT_WINDOW, Math.max(totalAvailable - 2, 0));
+        const effectiveRecent = new Set(this.recentChars.slice(-effectiveWindow));
+
+        // PASS 1: scan ALL buckets for fresh candidates (not recent + not lastChar)
         for (const bucketName of bucketOrder) {
             if (newCapped && bucketName === 'new') continue;
             const bucket = buckets[bucketName];
             if (bucket.length === 0) continue;
 
-            // Filter: exclude hard-blocked last char AND recent window
-            const fresh = bucket.filter(c => c.char !== hardBlock && !recent.has(c.char));
+            const fresh = bucket.filter(c => c.char !== hardBlock && !effectiveRecent.has(c.char));
             if (fresh.length > 0) {
                 return this._pickAndTrack(fresh);
             }
+        }
 
-            // Softer: exclude only hard-blocked last char
+        // PASS 2: scan ALL buckets for non-repeat only (allow recent, block lastChar)
+        for (const bucketName of bucketOrder) {
+            if (newCapped && bucketName === 'new') continue;
+            const bucket = buckets[bucketName];
+            if (bucket.length === 0) continue;
+
             const nonRepeat = bucket.filter(c => c.char !== hardBlock);
             if (nonRepeat.length > 0) {
                 return this._pickAndTrack(nonRepeat);
@@ -208,6 +221,7 @@ const QuizSystem = {
 
         // Only 1 char in the entire DB — no choice
         return this._pickAndTrack(allChars);
+
     },
 
     /** Pick random from candidates and update ring buffer */
